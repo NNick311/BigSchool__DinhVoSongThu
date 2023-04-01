@@ -1,0 +1,44 @@
+﻿@model BigSchool.ViewModels.FollowingsViewModel
+@using Microsoft.AspNet.Identity;
+@{
+    ViewBag.Title = "Following";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Following</h2>
+
+<div class="row">
+    <ul class="course">
+        @foreach (var follow in Model.Followings)
+        {
+            <li>
+                <div class="date">
+                </div>
+                <div class="details">
+                    <span class="lecturer">
+                        @follow.Name
+                        @if (Model.ShowAction)
+                        {
+                            <button class="btn btn-default btn-sm js-toggle-unfollow" data-user-id="@User.Identity.GetUserId()" data-followee-id="@follow.Id">Unfollow</button>
+                        }
+                    </span>
+                </div>
+            </li>
+        }
+    </ul>
+</div>
+@section scripts
+{
+    <script>
+        $(".js-toggle-unfollow").click(function (e) {
+            var button = $(e.target);
+            $.post("/api/Followings", { followerId: button.attr("data-user-id"), followeeId: button.attr("data-followee-id") })
+                .done(function () {
+                    button.remove();
+                })
+                .fail(function () {
+                    alert("Something Failed!!!");
+                });
+        });
+    </script>
+}
